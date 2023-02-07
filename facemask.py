@@ -10,6 +10,7 @@ from keras.preprocessing import image
 import cv2
 import datetime
 from PIL import Image
+import dlib
 
 '''
 # UNCOMMENT THE FOLLOWING CODE TO TRAIN THE CNN FROM SCRATCH
@@ -78,8 +79,11 @@ mymodel.predict(test_image)[0][0]
 
 mymodel=load_model('mymodel.h5')
 
+# cap = cv2.VideoCapture("C:\\Users\\Misaki Sato\\Desktop\\mask\\test.mp4")
 cap=cv2.VideoCapture(0)
 face_cascade=cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+landmark_predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 mouth = "mouth.jpg"
 cv2_img = cv2.imread(mouth, cv2.IMREAD_UNCHANGED)
@@ -119,7 +123,7 @@ while cap.isOpened():
         # 認識した顔を切り出す
         face_img = img[y:y+h, x:x+w]
         face_img = cv2.resize(face_img, (200, 200))      
-        cv2.imshow('face_img', face_img)
+        # cv2.imshow('face_img', face_img)
 
         # 下半分に顎を貼り付ける
         # overlayImage(src, overlay, location, size)
@@ -127,7 +131,12 @@ while cap.isOpened():
         # processing_img = cv2.cvtColor(processing_img, cv2.COLOR_BGR2GRAY)
         cv2.imshow('processing_img', processing_img)
 
-        # OpenFaceにかけて視線を抽出する
+        # # OpenFaceにかけて視線を抽出する：今はOpenCVの特徴点抽出ができるか試してみてる
+        # dlib_shape = landmark_predictor(face_img,face)
+        # shape_2d = np.array([[p.x, p.y] for p in dlib_shape.parts()])
+        # for s in shape_2d:
+        #     cv2.circle(face_img, center=tuple(s), radius=1, color=(255, 255, 255), thickness=2, lineType=cv2.LINE_AA)
+        # cv2.imshow('face_img', face_img)
           
     cv2.imshow('img',img)
 
